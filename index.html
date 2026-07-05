@@ -434,6 +434,15 @@
     text-align:center;
   }
 
+  .mission-winner-tap{ cursor:pointer; }
+  .mission-winner-tap:active{ filter:brightness(0.82); }
+  .mission-winner-label{
+    font-size:clamp(26px, 7vh, 44px);
+    font-weight:900;
+    letter-spacing:0.03em;
+    color:var(--ink);
+  }
+
   .overlay-single{
     flex:1;
     display:flex;
@@ -488,7 +497,7 @@
     .app{ display:none; }
     .rotate-hint{ display:flex; }
     #overlay-start{ display:none; }
-    #overlay-dmission{ display:none; }
+    #overlay-mission-setup{ display:none; }
   }
 </style>
 </head>
@@ -509,18 +518,6 @@
     </div>
   </div>
 
-  <!-- D-MISSION setup -->
-  <div class="overlay" id="overlay-dmission">
-    <div class="overlay-header">
-      <div class="overlay-title">D-MISSION TOTAL POINTS</div>
-    </div>
-    <div class="overlay-single">
-      <button class="step step-chakra" id="dmission-minus">–</button>
-      <span class="overlay-value" id="dmission-value">0</span>
-      <button class="step step-chakra" id="dmission-plus">+</button>
-      <button class="overlay-ok" id="dmission-ok">OK</button>
-    </div>
-  </div>
 
   <div class="app">
 
@@ -597,25 +594,33 @@
 
   </div>
 
-  <!-- Overlay 1: add this round's victory points -->
-  <div class="overlay" id="overlay-points">
+  <!-- Overlay 1: who won the current mission -->
+  <div class="overlay" id="overlay-mission-winner">
     <div class="overlay-header">
-      <button class="overlay-cancel" id="points-overlay-cancel">CANCEL</button>
-      <div class="overlay-title">POINTS THIS ROUND</div>
+      <button class="overlay-cancel" id="mission-winner-cancel">CANCEL</button>
+      <div class="overlay-title" id="mission-winner-title">WHO WON D-MISSION?</div>
     </div>
     <div class="overlay-main">
-      <div class="overlay-side left">
-        <button class="step step-chakra" data-ov="points" data-side="left" data-delta="1">+</button>
-        <span class="overlay-value" id="ov-points-left">0</span>
-        <button class="step step-chakra" data-ov="points" data-side="left" data-delta="-1">–</button>
+      <div class="overlay-side left mission-winner-tap" id="mission-winner-left">
+        <div class="mission-winner-label">PLAYER A</div>
       </div>
       <div class="divider"></div>
-      <div class="overlay-side right">
-        <button class="step step-chakra" data-ov="points" data-side="right" data-delta="1">+</button>
-        <span class="overlay-value" id="ov-points-right">0</span>
-        <button class="step step-chakra" data-ov="points" data-side="right" data-delta="-1">–</button>
+      <div class="overlay-side right mission-winner-tap" id="mission-winner-right">
+        <div class="mission-winner-label">PLAYER B</div>
       </div>
-      <button class="overlay-ok" id="points-overlay-ok">OK</button>
+    </div>
+  </div>
+
+  <!-- Overlay 1b: set the total points of a newly-opened mission -->
+  <div class="overlay" id="overlay-mission-setup">
+    <div class="overlay-header">
+      <div class="overlay-title" id="mission-setup-title">D-MISSION TOTAL POINTS</div>
+    </div>
+    <div class="overlay-single">
+      <button class="step step-chakra" id="mission-setup-minus">–</button>
+      <span class="overlay-value" id="mission-setup-value">0</span>
+      <button class="step step-chakra" id="mission-setup-plus">+</button>
+      <button class="overlay-ok" id="mission-setup-ok">OK</button>
     </div>
   </div>
 
@@ -793,33 +798,60 @@
     });
   }
 
-  // ---- Overlay: end of round (add points -> starting chakra) ----
-  const overlayPoints = document.getElementById("overlay-points");
+  // ---- Missions: resolve winners each round -> starting chakra -> unlock next mission ----
+  const MISSION_ORDER = ["d", "c", "b", "a"];
+  const MISSION_LABEL = { d: "D-MISSION", c: "C-MISSION", b: "B-MISSION", a: "A-MISSION" };
+  let missionValue = { d: null, c: null, b: null, a: null };
+  let activeMissions = [];
+  let resolveQueue = [];
+
+  const overlayMissionWinner = document.getElementById("overlay-mission-winner");
+  const missionWinnerTitle   = document.getElementById("mission-winner-title");
   const overlayChakra = document.getElementById("overlay-chakra");
-  let ovPoints = { left: 0, right: 0 };
   let ovChakra = { left: 5, right: 5 };
 
-  function renderOverlayPoints(){
-    document.getElementById("ov-points-left").textContent  = ovPoints.left;
-    document.getElementById("ov-points-right").textContent = ovPoints.right;
-  }
   function renderOverlayChakra(){
     document.getElementById("ov-chakra-left").textContent  = ovChakra.left;
     document.getElementById("ov-chakra-right").textContent = ovChakra.right;
   }
 
+  function startChakraStep(){
+    ovChakra = { left: 5, right: 5 };
+    renderOverlayChakra();
+    overlayChakra.classList.add("showing");
+  }
+
+  function resolveNextMission(){
+    if (resolveQueue.length === 0){
+      startChakraStep();
+      return;
+    }
+    const rank = resolveQueue.shift();
+    overlayMissionWinner.dataset.rank = rank;
+    missionWinnerTitle.textContent = `WHO WON ${MISSION_LABEL[rank]}? (${missionValue[rank]} PTS)`;
+    overlayMissionWinner.classList.add("showing");
+  }
+
+  function awardMissionWinner(side){
+    const rank = overlayMissionWinner.dataset.rank;
+    state[side].points = Math.max(0, state[side].points + missionValue[rank]);
+    render();
+    saveState();
+    overlayMissionWinner.classList.remove("showing");
+    resolveNextMission();
+  }
+
   document.getElementById("end-round").addEventListener("click", () => {
-    ovPoints = { left: 0, right: 0 };
-    renderOverlayPoints();
-    overlayPoints.classList.add("showing");
+    resolveQueue = [...activeMissions];
+    resolveNextMission();
   });
 
-  document.querySelectorAll('button.step[data-ov="points"]').forEach(btn => {
-    btn.addEventListener("click", () => {
-      const side = btn.dataset.side, delta = Number(btn.dataset.delta);
-      ovPoints[side] = Math.max(0, ovPoints[side] + delta);
-      renderOverlayPoints();
-    });
+  document.getElementById("mission-winner-left").addEventListener("click", () => awardMissionWinner("left"));
+  document.getElementById("mission-winner-right").addEventListener("click", () => awardMissionWinner("right"));
+
+  document.getElementById("mission-winner-cancel").addEventListener("click", () => {
+    resolveQueue = [];
+    overlayMissionWinner.classList.remove("showing");
   });
 
   document.querySelectorAll('button.step[data-ov="chakra"]').forEach(btn => {
@@ -828,22 +860,6 @@
       ovChakra[side] = Math.max(0, ovChakra[side] + delta);
       renderOverlayChakra();
     });
-  });
-
-  document.getElementById("points-overlay-cancel").addEventListener("click", () => {
-    overlayPoints.classList.remove("showing");
-  });
-
-  document.getElementById("points-overlay-ok").addEventListener("click", () => {
-    state.left.points  = Math.max(0, state.left.points  + ovPoints.left);
-    state.right.points = Math.max(0, state.right.points + ovPoints.right);
-    render();
-    saveState();
-    overlayPoints.classList.remove("showing");
-
-    ovChakra = { left: 5, right: 5 };
-    renderOverlayChakra();
-    overlayChakra.classList.add("showing");
   });
 
   document.getElementById("chakra-overlay-cancel").addEventListener("click", () => {
@@ -856,6 +872,9 @@
     render();
     saveState();
     overlayChakra.classList.remove("showing");
+
+    const nextRank = MISSION_ORDER.find(r => missionValue[r] === null);
+    if (nextRank) openMissionSetup(nextRank);
   });
 
   // ---- Start game gate + optional 30-min timer ----
@@ -895,39 +914,47 @@
   document.getElementById("start-timer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
     startTimer(30);
-    openDMissionSetup();
+    openMissionSetup("d");
   });
 
   document.getElementById("start-notimer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
     timerBox.classList.remove("active");
-    openDMissionSetup();
+    openMissionSetup("d");
   });
 
-  // ---- D-MISSION setup ----
-  const overlayDMission = document.getElementById("overlay-dmission");
-  const dMissionValueEl = document.getElementById("dmission-value");
-  let dMissionValue = 0;
+  // ---- Mission setup (set total points for a newly-opened mission) ----
+  const overlayMissionSetup = document.getElementById("overlay-mission-setup");
+  const missionSetupTitle   = document.getElementById("mission-setup-title");
+  const missionSetupValueEl = document.getElementById("mission-setup-value");
+  let missionSetupValue = 0;
+  let missionSetupRank = "d";
 
-  function openDMissionSetup(){
-    dMissionValue = 0;
-    dMissionValueEl.textContent = dMissionValue;
-    overlayDMission.classList.add("showing");
+  function openMissionSetup(rank){
+    missionSetupRank = rank;
+    missionSetupValue = 0;
+    missionSetupValueEl.textContent = missionSetupValue;
+    missionSetupTitle.textContent = `${MISSION_LABEL[rank]} TOTAL POINTS`;
+    overlayMissionSetup.classList.add("showing");
   }
 
-  document.getElementById("dmission-minus").addEventListener("click", () => {
-    dMissionValue = Math.max(0, dMissionValue - 1);
-    dMissionValueEl.textContent = dMissionValue;
+  document.getElementById("mission-setup-minus").addEventListener("click", () => {
+    missionSetupValue = Math.max(0, missionSetupValue - 1);
+    missionSetupValueEl.textContent = missionSetupValue;
   });
-  document.getElementById("dmission-plus").addEventListener("click", () => {
-    dMissionValue = dMissionValue + 1;
-    dMissionValueEl.textContent = dMissionValue;
+  document.getElementById("mission-setup-plus").addEventListener("click", () => {
+    missionSetupValue = missionSetupValue + 1;
+    missionSetupValueEl.textContent = missionSetupValue;
   });
 
-  document.getElementById("dmission-ok").addEventListener("click", () => {
-    if (confirm(`Total points: ${dMissionValue}?`)) {
-      document.getElementById("mission-value-d").textContent = dMissionValue;
-      overlayDMission.classList.remove("showing");
+  document.getElementById("mission-setup-ok").addEventListener("click", () => {
+    if (confirm(`Total points: ${missionSetupValue}?`)) {
+      missionValue[missionSetupRank] = missionSetupValue;
+      const cell = document.getElementById(`mission-value-${missionSetupRank}`);
+      cell.textContent = missionSetupValue;
+      cell.parentElement.classList.remove("locked");
+      activeMissions.push(missionSetupRank);
+      overlayMissionSetup.classList.remove("showing");
     }
   });
 
