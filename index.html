@@ -103,6 +103,10 @@
     align-items:center;
     gap:clamp(6px, 1.8vw, 14px);
   }
+  .mt-stepper.mt-stepper-vertical{
+    flex-direction:column;
+    gap:6px;
+  }
   .mt-step{
     appearance:none;
     border:none;
@@ -747,11 +751,10 @@
 
       <div class="mt-col locked" data-rank="d">
         <div class="mt-stat mt-rival">
-          <div class="mt-stat-label">RIVAL</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="rival" data-rank="d" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-rival-d">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="rival" data-rank="d" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-rival-d">0</span>
+            <button class="mt-step" data-mt="rival" data-rank="d" data-delta="-1">–</button>
           </div>
         </div>
         <div class="mt-mission-info">
@@ -759,22 +762,20 @@
           <div class="mt-diff" id="mt-diff-d">DIFF 0</div>
         </div>
         <div class="mt-stat mt-player">
-          <div class="mt-stat-label">YOU</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="player" data-rank="d" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-player-d">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="player" data-rank="d" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-player-d">0</span>
+            <button class="mt-step" data-mt="player" data-rank="d" data-delta="-1">–</button>
           </div>
         </div>
       </div>
 
       <div class="mt-col locked" data-rank="c">
         <div class="mt-stat mt-rival">
-          <div class="mt-stat-label">RIVAL</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="rival" data-rank="c" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-rival-c">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="rival" data-rank="c" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-rival-c">0</span>
+            <button class="mt-step" data-mt="rival" data-rank="c" data-delta="-1">–</button>
           </div>
         </div>
         <div class="mt-mission-info">
@@ -782,22 +783,20 @@
           <div class="mt-diff" id="mt-diff-c">DIFF 0</div>
         </div>
         <div class="mt-stat mt-player">
-          <div class="mt-stat-label">YOU</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="player" data-rank="c" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-player-c">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="player" data-rank="c" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-player-c">0</span>
+            <button class="mt-step" data-mt="player" data-rank="c" data-delta="-1">–</button>
           </div>
         </div>
       </div>
 
       <div class="mt-col locked" data-rank="b">
         <div class="mt-stat mt-rival">
-          <div class="mt-stat-label">RIVAL</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="rival" data-rank="b" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-rival-b">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="rival" data-rank="b" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-rival-b">0</span>
+            <button class="mt-step" data-mt="rival" data-rank="b" data-delta="-1">–</button>
           </div>
         </div>
         <div class="mt-mission-info">
@@ -805,22 +804,20 @@
           <div class="mt-diff" id="mt-diff-b">DIFF 0</div>
         </div>
         <div class="mt-stat mt-player">
-          <div class="mt-stat-label">YOU</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="player" data-rank="b" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-player-b">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="player" data-rank="b" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-player-b">0</span>
+            <button class="mt-step" data-mt="player" data-rank="b" data-delta="-1">–</button>
           </div>
         </div>
       </div>
 
       <div class="mt-col locked" data-rank="a">
         <div class="mt-stat mt-rival">
-          <div class="mt-stat-label">RIVAL</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="rival" data-rank="a" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-rival-a">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="rival" data-rank="a" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-rival-a">0</span>
+            <button class="mt-step" data-mt="rival" data-rank="a" data-delta="-1">–</button>
           </div>
         </div>
         <div class="mt-mission-info">
@@ -828,11 +825,10 @@
           <div class="mt-diff" id="mt-diff-a">DIFF 0</div>
         </div>
         <div class="mt-stat mt-player">
-          <div class="mt-stat-label">YOU</div>
-          <div class="mt-stepper">
-            <button class="mt-step" data-mt="player" data-rank="a" data-delta="-1">–</button>
-            <span class="mt-stat-value" id="mt-player-a">0</span>
+          <div class="mt-stepper mt-stepper-vertical">
             <button class="mt-step" data-mt="player" data-rank="a" data-delta="1">+</button>
+            <span class="mt-stat-value" id="mt-player-a">0</span>
+            <button class="mt-step" data-mt="player" data-rank="a" data-delta="-1">–</button>
           </div>
         </div>
       </div>
