@@ -191,8 +191,8 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    gap:2px;
+    justify-content:space-between;
+    padding:6px 0;
     color:var(--ink);
   }
   .points.left{ background:var(--left-dark); }
@@ -1376,7 +1376,7 @@
   document.querySelectorAll('button.mt-step[data-mt]').forEach(btn => {
     btn.addEventListener("click", () => {
       const rank = btn.dataset.rank, who = btn.dataset.mt, delta = Number(btn.dataset.delta);
-      mtPoints[rank][who] = Math.max(0, mtPoints[rank][who] + delta);
+      mtPoints[rank][who] = mtPoints[rank][who] + delta;
       mtRenderColumn(rank);
       mtRenderTotals();
     });
@@ -1385,7 +1385,7 @@
   document.querySelectorAll('button.mt-step[data-mt-total]').forEach(btn => {
     btn.addEventListener("click", () => {
       const who = btn.dataset.mtTotal, delta = Number(btn.dataset.delta);
-      mtTotals[who] = Math.max(0, mtTotals[who] + delta);
+      mtTotals[who] = mtTotals[who] + delta;
       mtRenderTotals();
     });
   });
@@ -1393,7 +1393,7 @@
   document.querySelectorAll('button.step[data-mt-final]').forEach(btn => {
     btn.addEventListener("click", () => {
       const who = btn.dataset.mtFinal, delta = Number(btn.dataset.delta);
-      mtTotals[who] = Math.max(0, mtTotals[who] + delta);
+      mtTotals[who] = mtTotals[who] + delta;
       mtRenderFinalScore();
       mtRenderTotals();
     });
