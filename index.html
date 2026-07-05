@@ -912,8 +912,15 @@
     timerInterval = setInterval(tickTimer, 500);
   }
 
+  function resetForNewGame(){
+    state = structuredClone(DEFAULTS);
+    render();
+    saveState();
+  }
+
   document.getElementById("start-timer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
+    resetForNewGame();
     startTimer(30);
     openMissionSetup("d");
   });
@@ -921,6 +928,7 @@
   document.getElementById("start-notimer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
     timerBox.classList.remove("active");
+    resetForNewGame();
     openMissionSetup("d");
   });
 
