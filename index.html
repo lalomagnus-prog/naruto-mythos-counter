@@ -848,6 +848,10 @@
           <div class="mt-diff mt-diff-total" id="mt-diff-overall">DIFF 0</div>
           <div class="mt-diff mt-diff-projected" id="mt-diff-projected">PROJECTED DIFF 0</div>
           <button class="end-round-btn" id="mt-end-round">END ROUND</button>
+          <div class="timer-box" id="mt-timer-box">
+            <div class="timer-label">TIME</div>
+            <div class="timer-value" id="mt-timer-value">30:00</div>
+          </div>
         </div>
         <div class="mt-stat mt-player">
           <div class="mt-stat-label">YOUR POINTS</div>
@@ -1401,14 +1405,17 @@
     appMode = "mission";
     overlayMode.classList.remove("showing");
     appMissionEl.classList.add("active");
-    resetMissionTracker();
-    openMissionSetup("d");
+    overlayStart.classList.add("showing");
   });
 
   // ---- Start game gate + optional 30-min timer ----
   const overlayStart = document.getElementById("overlay-start");
-  const timerBox      = document.getElementById("timer-box");
-  const timerValueEl  = document.getElementById("timer-value");
+  const timerBoxGame     = document.getElementById("timer-box");
+  const timerValueGame   = document.getElementById("timer-value");
+  const timerBoxMission  = document.getElementById("mt-timer-box");
+  const timerValueMission = document.getElementById("mt-timer-value");
+  let timerBox = timerBoxGame;
+  let timerValueEl = timerValueGame;
   let timerEndAt = null;
   let timerInterval = null;
 
@@ -1447,15 +1454,18 @@
 
   document.getElementById("start-timer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
-    resetForNewGame();
+    timerBox = appMode === "mission" ? timerBoxMission : timerBoxGame;
+    timerValueEl = appMode === "mission" ? timerValueMission : timerValueGame;
+    if (appMode === "mission") resetMissionTracker(); else resetForNewGame();
     startTimer(30);
     openMissionSetup("d");
   });
 
   document.getElementById("start-notimer-btn").addEventListener("click", () => {
     overlayStart.classList.remove("showing");
-    timerBox.classList.remove("active");
-    resetForNewGame();
+    timerBoxGame.classList.remove("active");
+    timerBoxMission.classList.remove("active");
+    if (appMode === "mission") resetMissionTracker(); else resetForNewGame();
     openMissionSetup("d");
   });
 
