@@ -16,7 +16,7 @@
     --diff-bg: #12181B;
     --ink: #FFFFFF;
     --ink-dim: rgba(255,255,255,0.72);
-    --topbar-h: 88px;
+    --topbar-h: 112px;
   }
 
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
@@ -99,6 +99,22 @@
     font-variant-numeric:tabular-nums;
     margin-top:1px;
   }
+
+  .end-round-btn{
+    margin-top:8px;
+    appearance:none;
+    border:none;
+    background:rgba(255,255,255,0.14);
+    color:rgba(255,255,255,0.85);
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:0.08em;
+    padding:6px 10px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .end-round-btn:active{ background:rgba(255,255,255,0.28); }
 
   /* ---- Main area: Chakra left / right ---- */
   .main{
@@ -189,6 +205,94 @@
   }
   .reset-btn:active{ background:rgba(255,255,255,0.28); }
 
+  /* ---- Overlays: sumar puntos / chakra inicial ---- */
+  .overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:10;
+    flex-direction:column;
+    height:100dvh;
+    width:100vw;
+  }
+  .overlay.showing{ display:flex; }
+
+  .overlay-header{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    height:52px;
+    background:var(--diff-bg);
+    color:var(--ink);
+  }
+  .overlay-title{
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:0.14em;
+  }
+  .overlay-cancel{
+    position:absolute;
+    left:14px;
+    appearance:none;
+    border:none;
+    background:none;
+    color:rgba(255,255,255,0.55);
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    cursor:pointer;
+    padding:8px;
+  }
+
+  .overlay-main{
+    display:flex;
+    flex:1;
+    min-height:0;
+  }
+  .overlay-side{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(16px, 5vw, 48px);
+    position:relative;
+    color:var(--ink);
+  }
+  .overlay-side.left{ background:var(--left); flex-direction:row; }
+  .overlay-side.right{ background:var(--right); flex-direction:row-reverse; }
+
+  .overlay-value{
+    font-size:clamp(90px, 42vh, 300px);
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+    line-height:1;
+    min-width:1.3ch;
+    text-align:center;
+  }
+
+  .overlay-ok{
+    position:absolute;
+    bottom:14px;
+    left:50%;
+    transform:translateX(-50%);
+    appearance:none;
+    border:none;
+    background:rgba(255,255,255,0.92);
+    color:#14202B;
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:0.08em;
+    padding:10px 30px;
+    border-radius:999px;
+    cursor:pointer;
+    z-index:5;
+  }
+  .overlay-ok:active{ background:#fff; }
+
   /* ---- Rotate hint for portrait ---- */
   .rotate-hint{
     display:none;
@@ -236,6 +340,7 @@
       <div class="diff">
         <div class="diff-label">DIFF</div>
         <div class="diff-value" id="diff">0</div>
+        <button class="end-round-btn" id="end-round">END ROUND</button>
       </div>
 
       <div class="points right">
@@ -270,8 +375,56 @@
 
   </div>
 
+  <!-- Overlay 1: sumar puntos de victoria de la ronda -->
+  <div class="overlay" id="overlay-points">
+    <div class="overlay-header">
+      <button class="overlay-cancel" id="points-overlay-cancel">CANCELAR</button>
+      <div class="overlay-title">PUNTOS DE ESTA RONDA</div>
+    </div>
+    <div class="overlay-main">
+      <div class="overlay-side left">
+        <button class="step step-chakra" data-ov="points" data-side="left" data-delta="1">+</button>
+        <span class="overlay-value" id="ov-points-left">0</span>
+        <button class="step step-chakra" data-ov="points" data-side="left" data-delta="-1">–</button>
+      </div>
+      <div class="divider"></div>
+      <div class="overlay-side right">
+        <button class="step step-chakra" data-ov="points" data-side="right" data-delta="1">+</button>
+        <span class="overlay-value" id="ov-points-right">0</span>
+        <button class="step step-chakra" data-ov="points" data-side="right" data-delta="-1">–</button>
+      </div>
+      <button class="overlay-ok" id="points-overlay-ok">OK</button>
+    </div>
+  </div>
+
+  <!-- Overlay 2: chakra inicial de la nueva ronda -->
+  <div class="overlay" id="overlay-chakra">
+    <div class="overlay-header">
+      <button class="overlay-cancel" id="chakra-overlay-cancel">CANCELAR</button>
+      <div class="overlay-title">CHAKRA INICIAL DE LA RONDA</div>
+    </div>
+    <div class="overlay-main">
+      <div class="overlay-side left">
+        <button class="step step-chakra" data-ov="chakra" data-side="left" data-delta="1">+</button>
+        <span class="overlay-value" id="ov-chakra-left">5</span>
+        <button class="step step-chakra" data-ov="chakra" data-side="left" data-delta="-1">–</button>
+      </div>
+      <div class="divider"></div>
+      <div class="overlay-side right">
+        <button class="step step-chakra" data-ov="chakra" data-side="right" data-delta="1">+</button>
+        <span class="overlay-value" id="ov-chakra-right">5</span>
+        <button class="step step-chakra" data-ov="chakra" data-side="right" data-delta="-1">–</button>
+      </div>
+      <button class="overlay-ok" id="chakra-overlay-ok">OK</button>
+    </div>
+  </div>
+
 <script>
-  const DEFAULTS = { left: { chakra: 5, points: 0 }, right: { chakra: 5, points: 0 } };
+  const DEFAULTS = {
+    left:  { chakra: 5, points: 0 },
+    right: { chakra: 5, points: 0 },
+    lastRoundChakra: { left: 5, right: 5 },
+  };
   const STORAGE_KEY = "naruto-mythos-counter-v1";
 
   function loadState(){
@@ -282,6 +435,10 @@
       return {
         left:  { chakra: parsed.left?.chakra  ?? DEFAULTS.left.chakra,  points: parsed.left?.points  ?? DEFAULTS.left.points },
         right: { chakra: parsed.right?.chakra ?? DEFAULTS.right.chakra, points: parsed.right?.points ?? DEFAULTS.right.points },
+        lastRoundChakra: {
+          left:  parsed.lastRoundChakra?.left  ?? DEFAULTS.lastRoundChakra.left,
+          right: parsed.lastRoundChakra?.right ?? DEFAULTS.lastRoundChakra.right,
+        },
       };
     } catch { return structuredClone(DEFAULTS); }
   }
@@ -317,6 +474,72 @@
       render();
       saveState();
     }
+  });
+
+  // ---- Overlay: fin de ronda (sumar puntos -> chakra inicial) ----
+  const overlayPoints = document.getElementById("overlay-points");
+  const overlayChakra = document.getElementById("overlay-chakra");
+  let ovPoints = { left: 0, right: 0 };
+  let ovChakra = { left: 5, right: 5 };
+
+  function renderOverlayPoints(){
+    document.getElementById("ov-points-left").textContent  = ovPoints.left;
+    document.getElementById("ov-points-right").textContent = ovPoints.right;
+  }
+  function renderOverlayChakra(){
+    document.getElementById("ov-chakra-left").textContent  = ovChakra.left;
+    document.getElementById("ov-chakra-right").textContent = ovChakra.right;
+  }
+
+  document.getElementById("end-round").addEventListener("click", () => {
+    ovPoints = { left: 0, right: 0 };
+    renderOverlayPoints();
+    overlayPoints.classList.add("showing");
+  });
+
+  document.querySelectorAll('button.step[data-ov="points"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const side = btn.dataset.side, delta = Number(btn.dataset.delta);
+      ovPoints[side] = Math.max(0, ovPoints[side] + delta);
+      renderOverlayPoints();
+    });
+  });
+
+  document.querySelectorAll('button.step[data-ov="chakra"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const side = btn.dataset.side, delta = Number(btn.dataset.delta);
+      ovChakra[side] = Math.max(0, ovChakra[side] + delta);
+      renderOverlayChakra();
+    });
+  });
+
+  document.getElementById("points-overlay-cancel").addEventListener("click", () => {
+    overlayPoints.classList.remove("showing");
+  });
+
+  document.getElementById("points-overlay-ok").addEventListener("click", () => {
+    state.left.points  = Math.max(0, state.left.points  + ovPoints.left);
+    state.right.points = Math.max(0, state.right.points + ovPoints.right);
+    render();
+    saveState();
+    overlayPoints.classList.remove("showing");
+
+    ovChakra = { left: state.lastRoundChakra.left, right: state.lastRoundChakra.right };
+    renderOverlayChakra();
+    overlayChakra.classList.add("showing");
+  });
+
+  document.getElementById("chakra-overlay-cancel").addEventListener("click", () => {
+    overlayChakra.classList.remove("showing");
+  });
+
+  document.getElementById("chakra-overlay-ok").addEventListener("click", () => {
+    state.left.chakra  = ovChakra.left;
+    state.right.chakra = ovChakra.right;
+    state.lastRoundChakra = { left: ovChakra.left, right: ovChakra.right };
+    render();
+    saveState();
+    overlayChakra.classList.remove("showing");
   });
 
   render();
