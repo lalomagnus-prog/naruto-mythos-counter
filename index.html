@@ -570,7 +570,7 @@
     <div class="options-panel">
 
       <div class="options-menu" id="options-menu">
-        <button class="options-btn-row danger" id="reset-tracking">RESET TRACKING</button>
+        <button class="options-btn-row danger" id="reset-game">RESET GAME</button>
         <button class="options-btn-row" id="install-shortcut">ADD TO HOME SCREEN</button>
         <p class="install-hint" id="install-hint">Your browser can't install it with one tap — open the share/menu button and choose "Add to Home Screen".</p>
         <button class="options-btn-row" id="about-open">ABOUT</button>
@@ -656,12 +656,11 @@
     overlayOptions.classList.remove("showing");
   });
 
-  document.getElementById("reset-tracking").addEventListener("click", () => {
-    if (confirm("Reset Chakra and Points for both players?")) {
+  document.getElementById("reset-game").addEventListener("click", () => {
+    if (confirm("Reset the game for both players? This will restart the app.")) {
       state = structuredClone(DEFAULTS);
-      render();
       saveState();
-      overlayOptions.classList.remove("showing");
+      location.reload();
     }
   });
 
