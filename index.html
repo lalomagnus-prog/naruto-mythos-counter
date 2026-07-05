@@ -839,7 +839,7 @@
             <span class="mt-stat-value" id="mt-rival-total">0</span>
             <button class="mt-step" data-mt-total="rival" data-delta="1">+</button>
           </div>
-          <span class="mt-projected" id="mt-rival-projected">+0</span>
+          <span class="mt-projected" id="mt-rival-projected">PROJECTED 0</span>
         </div>
         <div class="mt-mission-info">
           <div class="mt-diff mt-diff-total" id="mt-diff-overall">DIFF 0</div>
@@ -853,7 +853,7 @@
             <span class="mt-stat-value" id="mt-player-total">0</span>
             <button class="mt-step" data-mt-total="player" data-delta="1">+</button>
           </div>
-          <span class="mt-projected" id="mt-player-projected">+0</span>
+          <span class="mt-projected" id="mt-player-projected">PROJECTED 0</span>
         </div>
       </div>
 
@@ -948,7 +948,7 @@
         <div class="mt-final-stack">
           <div class="mt-stat-label">YOUR POINTS</div>
           <span class="overlay-value" id="mt-final-player">0</span>
-          <span class="mt-projected" id="mt-final-player-projected">+0</span>
+          <span class="mt-projected" id="mt-final-player-projected">PROJECTED 0</span>
         </div>
         <button class="step step-chakra" data-mt-final="player" data-delta="-1">–</button>
       </div>
@@ -958,7 +958,7 @@
         <div class="mt-final-stack">
           <div class="mt-stat-label">RIVAL POINTS</div>
           <span class="overlay-value" id="mt-final-rival">0</span>
-          <span class="mt-projected" id="mt-final-rival-projected">+0</span>
+          <span class="mt-projected" id="mt-final-rival-projected">PROJECTED 0</span>
         </div>
         <button class="step step-chakra" data-mt-final="rival" data-delta="-1">–</button>
       </div>
@@ -1292,12 +1292,12 @@
     mtApplyDiffColor(diffEl, diff);
 
     const { rivalProjected, playerProjected } = mtProjection();
-    document.getElementById("mt-rival-projected").textContent  = `+${rivalProjected}`;
-    document.getElementById("mt-player-projected").textContent = `+${playerProjected}`;
+    document.getElementById("mt-rival-projected").textContent  = `PROJECTED ${mtTotals.rival + rivalProjected}`;
+    document.getElementById("mt-player-projected").textContent = `PROJECTED ${mtTotals.player + playerProjected}`;
 
     const projectedDiff = diff + playerProjected - rivalProjected;
     const projEl = document.getElementById("mt-diff-projected");
-    projEl.textContent = `PROJECTED ${projectedDiff}`;
+    projEl.textContent = `PROJECTED DIFF ${projectedDiff}`;
     mtApplyDiffColor(projEl, projectedDiff);
   }
 
@@ -1305,8 +1305,8 @@
     document.getElementById("mt-final-player").textContent = mtTotals.player;
     document.getElementById("mt-final-rival").textContent  = mtTotals.rival;
     const { rivalProjected, playerProjected } = mtProjection();
-    document.getElementById("mt-final-player-projected").textContent = `+${playerProjected}`;
-    document.getElementById("mt-final-rival-projected").textContent  = `+${rivalProjected}`;
+    document.getElementById("mt-final-player-projected").textContent = `PROJECTED ${mtTotals.player + playerProjected}`;
+    document.getElementById("mt-final-rival-projected").textContent  = `PROJECTED ${mtTotals.rival + rivalProjected}`;
   }
 
   function mtShowFinalScore(){
